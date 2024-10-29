@@ -1,0 +1,17 @@
+{
+  "author": "",
+  "description": "",
+  "devDependencies": {
+    "browser-sync": "^2.12.5",
+    "eslint": "^9.13.0"
+  },
+  "license": "ISC",
+  "lockfileVersion": 3,
+  "main": "app.js",
+  "packages": {},
+  "requires": true,
+  "scripts": {
+    "start": "browser-sync start --server --files 'style.css, index.html, app.js'"
+  },
+  "version": "1.0.0"
+}
