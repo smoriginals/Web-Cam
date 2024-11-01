@@ -27,9 +27,11 @@ function PaintToCanvas() {
         ctx.drawImage(video, 0, 0, width, height);
         let pixels = ctx.getImageData(0, 0, width, height);
 
-        pixels = RedEffect(pixels);  //Red Effect
-        pixels = RgbSplit(pixels);  //RGB Effect
-        ctx.globalAlpha = 0.1;      //Blur Amt
+       // pixels = RedEffect(pixels);  //Red Effect
+       // pixels = RgbSplit(pixels);  //RGB Effect
+       // ctx.globalAlpha = 0.1;      //Blur Amt
+
+        pixels = GreenScreenFilter(pixels);
         ctx.putImageData(pixels, 0, 0);
     }, 16);
 }
@@ -59,6 +61,26 @@ function RgbSplit(pixels) {
         pixels.data[i - 150] = pixels.data[i + 0]; //Red
         pixels.data[i + 100] = pixels.data[i + 1]; //Green
         pixels.data[i - 150] = pixels.data[i + 2]; //Blue
+    }
+    return pixels;
+}
+
+function GreenScreenFilter(pixels) {
+    const levels = {};
+    const sliders = document.querySelectorAll(".controls input");
+
+    sliders.forEach((inputs) => {
+        levels[inputs.name] = inputs.value;
+    });
+    for (let i = 0; i < pixels.data.length; i += 4) {
+        red = pixels.data[i + 0];
+        green = pixels.data[i + 1];
+        blue = pixels.data[i + 2];
+        alpha = pixels.data[i + 3];
+
+        if (red >= levels.redMin && green >= levels.greenMin && blue >= levels.blueMin && red <= levels.redMax && green <= levels.greenMax && blue <= levels.blueMax) {
+            pixels.data[i + 3] = 0;
+        }
     }
     return pixels;
 }
