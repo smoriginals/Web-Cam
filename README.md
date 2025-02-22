@@ -1,1 +1,1 @@
-[OPEN IN BROWSER](https://smos-github.github.io/Web-Cam/)
+[OPEN IN BROWSER](https://smoriginals.github.io/Web-Cam/)
