@@ -1,34 +1,43 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>My Web Cam</title>
+    <title>Webcam Green Screen</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="controls">
-        <button onClick="TakePhoto()" class="takePhoto">Take a Photo</button>
 
-        <lable for="slider_one">Red Min:</lable>
-        <input type="range" name="redMin" min="0" max="255" step="2.25" value="0.0" class="slider-one sl" />
-        <lable for="slider_two">Green Min:</lable>
-        <input type="range" name="greenMin" min="0" max="255" step="2.25" value="0.0" class="slider-two sl" />
-        <lable for="slider_three">Blue Min:</lable>
-        <input type="range" name="blueMin" min="0" max="255" step="2.25" value="0.0" class="slider-three sl" />
-        <lable for="slider_four">Red Max:</lable>
-        <input type="range" name="redMax" min="0" max="255" step="2.25" value="0.0" class="slider-four sl" />
-        <lable for="slider_five">Green Max:</lable>
-        <input type="range" name="greenMax" min="0" max="255" step="2.25" value="0.0" class="slider-five sl" />
-        <lable for="slider_six">Blue Max:</lable>
-        <input type="range" name="blueMax" min="0" max="255" step="2.25" value="0.0" class="slider-six sl" />
+<div class="controls">
+    <button class="takePhoto">Take Photo</button>
 
-    </div>
-    <canvas class="web-area">
-    </canvas>
-    <video class="web-cam"></video>
-    <audio class="snap" src="#" hidden></audio>
-    <div class="screenshot-area">
-    </div>
-    <script src="app.js"></script>
+    <label>Red Min</label>
+    <input type="range" name="redMin" min="0" max="255" value="0" />
+
+    <label>Green Min</label>
+    <input type="range" name="greenMin" min="0" max="255" value="0" />
+
+    <label>Blue Min</label>
+    <input type="range" name="blueMin" min="0" max="255" value="0" />
+
+    <label>Red Max</label>
+    <input type="range" name="redMax" min="0" max="255" value="255" />
+
+    <label>Green Max</label>
+    <input type="range" name="greenMax" min="0" max="255" value="255" />
+
+    <label>Blue Max</label>
+    <input type="range" name="blueMax" min="0" max="255" value="255" />
+</div>
+
+<main class="camera-area">
+    <canvas class="web-area"></canvas>
+    <video class="web-cam" playsinline muted></video>
+</main>
+
+<audio class="snap" src="snap.mp3" hidden></audio>
+
+<div class="screenshot-area"></div>
+
+<script src="app.js"></script>
 </body>
 </html>

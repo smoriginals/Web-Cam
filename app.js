@@ -1,89 +1,70 @@
 const video = document.querySelector(".web-cam");
 const canvas = document.querySelector(".web-area");
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext("2d");
 const strip = document.querySelector(".screenshot-area");
 const snap = document.querySelector(".snap");
 
-
-function TakeUserVideo() {
-    navigator.mediaDevices.getUserMedia(
-        { video: true, audio: true })
-        .then(showUserCam => {
-            video.srcObject = showUserCam;
+function takeUserVideo() {
+    navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then(stream => {
+            video.srcObject = stream;
             video.play();
         })
-        .catch(err => {
-            console.log("Cam Access Denied!!", err);
-        })
+        .catch(err => console.error("Camera access denied", err));
 }
 
-function PaintToCanvas() {
-    const height = video.videoHeight;
-    const width = video.videoWidth;
-    canvas.width = width;
-    canvas.height = height;
+function paintToCanvas() {
+    if (!video.videoWidth || !video.videoHeight) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
     return setInterval(() => {
-        ctx.drawImage(video, 0, 0, width, height);
-        let pixels = ctx.getImageData(0, 0, width, height);
-
-       // pixels = RedEffect(pixels);  //Red Effect
-       // pixels = RgbSplit(pixels);  //RGB Effect
-       // ctx.globalAlpha = 0.1;      //Blur Amt
-
-        pixels = GreenScreenFilter(pixels);
+        ctx.drawImage(video, 0, 0);
+        let pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        pixels = greenScreenFilter(pixels);
         ctx.putImageData(pixels, 0, 0);
     }, 16);
 }
 
-function TakePhoto() {
+function takePhoto() {
     snap.currentTime = 0;
     snap.play();
-    const data = canvas.toDataURL('image/jpeg');
-    const link = document.createElement('a');
+
+    const data = canvas.toDataURL("image/jpeg");
+    const link = document.createElement("a");
     link.href = data;
-    link.setAttribute('download', 'UGLY');
-    link.innerHTML = `<img src="${data}" alt="UGLY Man" height="150px" width="150px"/>`;
-    strip.insertBefore(link, strip.firstChild);
+    link.download = "snapshot";
+    link.innerHTML = `<img src="${data}" alt="Snapshot" />`;
+    strip.prepend(link);
 }
 
-function RedEffect(pixels) {
-    for (let i = 0; i < pixels.data.length; i += 4) {
-        pixels.data[i + 0] = pixels.data[i + 0] + 100; //Red
-        pixels.data[i + 1] = pixels.data[i + 1] - 50; //Green
-        pixels.data[i + 2] = pixels.data[i + 2] * 0.5; //Blue
-    }
-    return pixels;
-}
-
-function RgbSplit(pixels) {
-    for (let i = 0; i < pixels.data.length; i += 4) {
-        pixels.data[i - 150] = pixels.data[i + 0]; //Red
-        pixels.data[i + 100] = pixels.data[i + 1]; //Green
-        pixels.data[i - 150] = pixels.data[i + 2]; //Blue
-    }
-    return pixels;
-}
-
-function GreenScreenFilter(pixels) {
+function greenScreenFilter(pixels) {
     const levels = {};
-    const sliders = document.querySelectorAll(".controls input");
-
-    sliders.forEach((inputs) => {
-        levels[inputs.name] = inputs.value;
+    document.querySelectorAll(".controls input").forEach(input => {
+        levels[input.name] = Number(input.value);
     });
-    for (let i = 0; i < pixels.data.length; i += 4) {
-        red = pixels.data[i + 0];
-        green = pixels.data[i + 1];
-        blue = pixels.data[i + 2];
-        alpha = pixels.data[i + 3];
 
-        if (red >= levels.redMin && green >= levels.greenMin && blue >= levels.blueMin && red <= levels.redMax && green <= levels.greenMax && blue <= levels.blueMax) {
+    for (let i = 0; i < pixels.data.length; i += 4) {
+        const red = pixels.data[i];
+        const green = pixels.data[i + 1];
+        const blue = pixels.data[i + 2];
+
+        if (
+            red >= levels.redMin &&
+            green >= levels.greenMin &&
+            blue >= levels.blueMin &&
+            red <= levels.redMax &&
+            green <= levels.greenMax &&
+            blue <= levels.blueMax
+        ) {
             pixels.data[i + 3] = 0;
         }
     }
     return pixels;
 }
-TakeUserVideo();
 
-video.addEventListener('canplay', PaintToCanvas);
+takeUserVideo();
+video.addEventListener("loadeddata", paintToCanvas);
+document.querySelector(".takePhoto").addEventListener("click", takePhoto);
